@@ -1,0 +1,51 @@
+grammar org.xtext.example.mydsl.HTMLbuild with org.eclipse.xtext.common.Terminals
+
+generate hTMLbuild "http://www.xtext.org/example/mydsl/HTMLbuild"
+
+Model:
+	elements += Type*
+;
+
+Type:
+	(Style | Content | Div)
+;
+
+Style:
+	'Style' style_id=ID ':' (link=[Link] | newlink=Link)
+;
+
+Content:
+	Text | Image | Link
+;
+
+Text:
+	{Text} 'Text' (name=ID)? ':' (h1 ?= '#' | h2 ?= '##' | h3 ?= '###')? STRING
+;
+
+Image:
+	'Image' name=ID ':' (link=[Link] | newlink=Link)
+;
+
+Link:
+	'Link' (name=ID)? ':' (address=STRING | anchor=[Content]) ( 'linktext' linktext=STRING )?
+;
+
+Element:
+	(Content | Div) | elem=[Content]
+;
+
+Div:
+	(div_id=ID)? '{' divelements += Element ( separators+=Separator divelements += Element )* '}'
+;
+
+Separator:
+	Next | Then
+;
+
+Next:
+	{Next} '<next'(hasratio?='('(ratios+=INT '/')? ratios+=INT')')?'>'
+;
+
+Then:
+	{Then} '<then'(hasratio?='('(ratios+=INT '/')? ratios+=INT')')?'>'
+;
